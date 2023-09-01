@@ -1,4 +1,4 @@
-require('./models/Data.js');
+require('./Data.js');
 
 const Cidade = require('./models/Cidade.js');
 
