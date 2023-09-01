@@ -4,4 +4,20 @@ module.exports = class Cidade {
         this.nome = nome;
         this.uf = uf;
     }
+
+    create(ifSuccess) {
+        query(`INSERT INTO cidades VALUES (null, "${this.nome}", "${this.uf}")`, function(result) {
+            if (result) {
+                ifSuccess(result);
+            }
+        });
+    }
+
+    delete(ifSuccess) {
+        query(`DELETE FROM cidades WHERE id = ${this.id}`, function(result) {
+            if (result) {
+                ifSuccess(result);
+            }
+        });
+    }
 }
