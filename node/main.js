@@ -1,6 +1,6 @@
 require('./Data.js');
 
-import { Cidade } from './Cidade.js';
+import { Cidade } from './models/Cidade.js';
 
 let cidade = new Cidade(25, 'São Paulo', 'SP');
 
