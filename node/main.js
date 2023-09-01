@@ -1,6 +1,6 @@
 require('./Data.js');
 
-const Cidade = require('./models/Cidade.js');
+import { Cidade } from './Cidade.js';
 
 let cidade = new Cidade(25, 'São Paulo', 'SP');
 
@@ -10,8 +10,8 @@ let cidade = new Cidade(25, 'São Paulo', 'SP');
     }
 ); */
 
-cidade.delete(
+/* cidade.delete(
     function(result) {
         console.log('Deu certo: ' + result);
     }
-);
+); */

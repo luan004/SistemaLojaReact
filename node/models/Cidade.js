@@ -1,4 +1,4 @@
-module.exports = class Cidade {
+class Cidade {
     constructor(id, nome, uf) {
         this.id = id;
         this.nome = nome;
@@ -21,3 +21,5 @@ module.exports = class Cidade {
         });
     }
 }
+
+export default Cidade;
