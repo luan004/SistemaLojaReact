@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import "../css/StatusBar.css";
+import "../style/StatusBar.css";
 
 const StatusBar = () =>{ 
     const [date, setDate] = useState(new Date());
@@ -52,12 +52,12 @@ const StatusBar = () =>{
         case 10:
             month = "Novembro";
             break;
-        case 11:
+        default:
             month = "Dezembro";
             break;
     }
     const year = date.getFullYear();
-    const time = date.getHours() + ":" + date.getMinutes();
+    const time = ('0'+date.getHours()).slice(-2) + ":" + ('0'+date.getMinutes()).slice(-2);
 
     return (
         <div className="StatusBar">

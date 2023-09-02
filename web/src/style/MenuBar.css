@@ -49,3 +49,7 @@
     color: white;
     text-decoration: none;
 }
+
+.sub-menu li span {
+    margin-left: 6px;
+}
