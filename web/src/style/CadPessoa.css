@@ -1,0 +1,110 @@
+.view {
+    background-color: #d6d6d6;
+    height: max-content;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.title, .window {
+    background-color: #dddddd;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #a6a6a6;
+    box-sizing: border-box;
+}
+
+.tab-menu {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.tab {
+    width: -webkit-fill-available;
+    border-radius: 5px;
+    padding: 6px;
+    transition: 0.2s;
+    border: 1px solid #9c9c9c;
+    background-color: #f0f0f0;
+}
+
+.tab:hover, .tab.active {
+    background-color: #c4c4c4;
+    cursor: pointer;
+}
+
+.window {
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    border: 1px solid #9c9c9c;
+    padding: 5px;
+}
+
+.table th {
+    background-color: #c4c4c4;
+}
+
+.table tr:nth-child(even) {
+    background-color: #e0e0e0;
+}
+
+.table tr:hover {
+    background-color: #d4d4d4;
+}
+
+.btn-action {
+    border-radius: 5px;
+    margin-left: 5px;
+    border: solid 1px;
+}
+
+.btn-action:hover {
+    cursor: pointer;
+}
+
+.btn-action.edit {
+    background-color: #3d8f3d;
+    border-color: rgb(2, 71, 2);
+}
+
+.btn-action.remove {
+    background-color: #c71c1c;
+    border-color: rgb(88, 10, 10);
+}
+
+.listar {
+    display: flex;
+    height: -webkit-fill-available;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.incluir {
+    background-color: red;
+    padding: 20px;
+    height: -webkit-fill-available;
+}
+
+.listar, .incluir {
+    display: none;
+}
+
+.listar.active, .incluir.active {
+    display: block;
+}
+
