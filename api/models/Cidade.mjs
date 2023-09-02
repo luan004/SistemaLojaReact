@@ -1,4 +1,4 @@
-import query from '../Data.mjs';
+import query from '../data.mjs';
 
 export default class Cidade {
     constructor(id, nome, uf) {
@@ -20,6 +20,18 @@ export default class Cidade {
             if (result) {
                 ifSuccess(result);
             }
+        });
+    }
+
+    static async getAllCities() {
+        return new Promise((resolve, reject) => {
+            query('SELECT * FROM cidades', function(result) {
+                if (result) {
+                    resolve(result);
+                } else {
+                    reject();
+                }
+            });
         });
     }
 }
