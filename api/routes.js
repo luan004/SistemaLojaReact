@@ -6,7 +6,7 @@ const router = express.Router();
 /* ROTAS CIDADE */
 router.get('/cidades', async (req, res) => {
     try {
-        const cidades = await Cidade.getAllCities();
+        const cidades = await Cidade.get();
         res.json(cidades);
     } catch (error) {
         console.error(error);
@@ -33,6 +33,18 @@ router.delete('/cidades/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao deletar cidade.' });
+    }
+});
+router.put('/cidades/:id', async (req, res) => {
+    const cidadeId = req.params.id;
+    const { nome, uf } = req.body;
+    try {
+        const cidade = new Cidade(cidadeId, nome, uf);
+        await cidade.update();
+        res.json({ message: 'Cidade atualizada com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao atualizar cidade.' });
     }
 });
 

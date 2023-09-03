@@ -7,6 +7,8 @@ function CadCidade() {
   const [incluir, setIncluir] = useState(false);
   const [cidades, setCidades] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   function showListar() {
     setListar(true);
@@ -17,6 +19,16 @@ function CadCidade() {
     setListar(false);
     setIncluir(true);
   }
+
+  const editItem = (cidade) => {
+    setEditMode(true);
+    setEditingItem(cidade);
+    showIncluir();
+    
+    document.getElementById('cod').value = cidade.id;
+    document.getElementById('nome').value = cidade.nome;
+    document.getElementById('uf').value = cidade.uf;
+  };
 
   useEffect(() => {
     if (listar) {
@@ -40,24 +52,44 @@ function CadCidade() {
   function cancel() {
     const form = document.getElementById('form');
     form.reset();
+    setEditMode(false);
   }
 
   function submit() {
-    const newCidade = {
-      nome: document.getElementById('nome').value,
-      uf: document.getElementById('uf').value,
-    };
-  
-    fetch("http://localhost:3001/api/cidades", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newCidade),
-    })
+    if (editMode) {
+      const editCidade = {
+        id: document.getElementById('cod').value,
+        nome: document.getElementById('nome').value,
+        uf: document.getElementById('uf').value,
+      }
+      fetch(`http://localhost:3001/api/cidades/${editingItem.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editCidade),
+      })
+      .then((data) => {
+        setEditMode(false);
+        setEditingItem(null);
+        cancel();
+      })
+    } else {
+      const newCidade = {
+        nome: document.getElementById('nome').value,
+        uf: document.getElementById('uf').value,
+      };
+      fetch("http://localhost:3001/api/cidades", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCidade),
+      })
       .then((data) => {
         cancel();
       })
+    }
   }
   
   const openModal = () => {
@@ -112,7 +144,7 @@ function CadCidade() {
                   <td>{cidade.nome}</td>
                   <td>{cidade.uf}</td>
                   <td>
-                    <button className="btn-action edit">Editar</button>
+                    <button className="btn-action edit" onClick={() => editItem(cidade)}>Editar</button>
                     <button className="btn-action remove" onClick={openModal}>Excluir</button>
                     { showModal && (
                       <Modal 

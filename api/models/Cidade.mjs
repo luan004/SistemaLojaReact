@@ -27,7 +27,7 @@ export default class Cidade {
         });
     }
 
-    static async getAllCities() {
+    static async get() {
         return new Promise((resolve, reject) => {
             query('SELECT * FROM cidades', function(result) {
                 if (result) {
@@ -36,6 +36,16 @@ export default class Cidade {
                     reject();
                 }
             });
+        });
+    }
+
+    update() {
+        return new Promise((resolve, reject) => {
+            query(`UPDATE cidades SET nome = "${this.nome}", uf = "${this.uf}" WHERE id = ${this.id}`, function(result) {
+                if (result) {
+                    
+                }
+            }); 
         });
     }
 }
