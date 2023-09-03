@@ -69,8 +69,16 @@ function RelPessoa() {
         <span>Cadastro de Pessoas</span>
       </div>
       <div className="window">
-        <div className={"listas"} >
-          <table className="table">
+        <form>
+            <div className="input">
+                <label htmlFor="nome">Parte do Nome</label>
+                <input type="text" id="nome" name="nome" />
+            </div>
+            <div className="input">
+                <label htmlFor=""></label>
+            </div>
+        </form>
+        <table className="table">
             <thead>
                 <tr>
                   <th>Código</th>
@@ -89,8 +97,7 @@ function RelPessoa() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
+        </table>
       </div>
     </div>
   );
