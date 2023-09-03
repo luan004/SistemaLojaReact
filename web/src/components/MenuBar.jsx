@@ -13,25 +13,25 @@ const MenuBar = () => {
                     Cadastros
                     <ul className="sub-menu">
                         <li>
-                            <Link to="/cadastro/bairros">
+                            <Link to="/cadastros/bairros">
                                 <FontAwesomeIcon icon={faRoad} />
                                 <span>Bairros</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/cadastro/cidades">
+                            <Link to="/cadastros/cidades">
                                 <FontAwesomeIcon icon={faCity} />
                                 <span>Cidades</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/cadastro/pessoas">
+                            <Link to="/cadastros/pessoas">
                                 <FontAwesomeIcon icon={faUser} />
                                 <span>Pessoas</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/cadastro/produtos">
+                            <Link to="/cadastros/produtos">
                                 <FontAwesomeIcon icon={faBox} />
                                 <span>Produtos</span>
                             </Link>
@@ -41,7 +41,7 @@ const MenuBar = () => {
                 <li className="menu-item">
                     Movimentos
                     <ul className="sub-menu">
-                        <li><Link to="/movimento/vendas">Vendas</Link></li>
+                        <li><Link to="/movimentos/vendas">Vendas</Link></li>
                     </ul>
                 </li>
                 <li className="menu-item">
