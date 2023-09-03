@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-
+import Modal from "../../components/Modal";
 import '../../style/Cad.css';
 
 function CadCidade() {
   const [listar, setListar] = useState(true);
   const [incluir, setIncluir] = useState(false);
   const [cidades, setCidades] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   function showListar() {
     setListar(true);
@@ -18,25 +19,23 @@ function CadCidade() {
   }
 
   useEffect(() => {
-    // Função para buscar os dados da API
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/api/cidades");
-        if (!response.ok) {
-          throw new Error("Erro ao buscar dados da API");
-        }
-        const data = await response.json();
-        setCidades(data); // Define os dados da API no estado "cidades"
-      } catch (error) {
-        console.error("Erro ao buscar dados da API:", error);
-      }
-    };
-
     if (listar) {
-      fetchData(); // Chama a função de busca quando a página é carregada ou "Listar" é clicado
+      loadLista();
     }
-  }, [listar]); // A função será executada quando o valor de "listar" mudar
+  }, [listar]);
 
+  const loadLista = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/cidades");
+      if (!response.ok) {
+        throw new Error("Erro ao buscar dados da API");
+      }
+      const data = await response.json();
+      setCidades(data);
+    } catch (error) {
+      console.error("Erro ao buscar dados da API:", error);
+    }
+  };
 
   function cancel() {
     const form = document.getElementById('form');
@@ -44,13 +43,11 @@ function CadCidade() {
   }
 
   function submit() {
-    // Coletar os dados do formulário
     const newCidade = {
       nome: document.getElementById('nome').value,
       uf: document.getElementById('uf').value,
     };
   
-    // Enviar os dados para a API
     fetch("http://localhost:3001/api/cidades", {
       method: "POST",
       headers: {
@@ -63,6 +60,29 @@ function CadCidade() {
       })
   }
   
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const confirmModal = (cidade) => {
+    fetch(`http://localhost:3001/api/cidades/${cidade.id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao excluir a cidade");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        loadLista();
+      })
+    setShowModal(false);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
 
   return (
@@ -93,7 +113,16 @@ function CadCidade() {
                   <td>{cidade.uf}</td>
                   <td>
                     <button className="btn-action edit">Editar</button>
-                    <button className="btn-action remove">Excluir</button>
+                    <button className="btn-action remove" onClick={openModal}>Excluir</button>
+                    { showModal && (
+                      <Modal 
+                        message="Deseja realmente excluir o registro?"
+                        confirmText="Sim"
+                        cancelText="Não"
+                        onConfirm={() => confirmModal(cidade)}
+                        onClose={closeModal}
+                      />
+                    )}
                   </td>
                 </tr>
               ))}
@@ -113,7 +142,7 @@ function CadCidade() {
               </div>
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="uf">UF</label>
-                <input type="text" id="uf" name="uf" />
+                <input type="text" id="uf" name="uf" maxLength={2} style={{textTransform:"uppercase"}}/>
               </div>
             </div>
             <div className="input-row bottom">
