@@ -72,7 +72,7 @@ function RelPessoa() {
   return (
     <div className="viewload">
       <div className="title">
-        <span>Cadastro de Pessoas</span>
+        <span>Relatório de Pessoas</span>
       </div>
       <div className="window">
         <form>

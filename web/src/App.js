@@ -11,6 +11,7 @@ import CadBairro from './views/cadastros/CadBairro';
 import CadProduto from './views/cadastros/CadProduto';
 import MovVenda from './views/movimentos/MovVenda';
 import RelPessoa from './views/relatorios/RelPessoa';
+import RelVenda from './views/relatorios/RelVenda';
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
           <Route path="/cadastros/produtos" element={<CadProduto />} />
           <Route path="/movimentos/vendas" element={<MovVenda />} />
           <Route path="/relatorios/pessoas" element={<RelPessoa />} />
-          <Route path="/relatorios/vendas" element={<h1>Relatorio de Vendas</h1>} />
+          <Route path="/relatorios/vendas" element={<RelVenda />} />
           <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
 

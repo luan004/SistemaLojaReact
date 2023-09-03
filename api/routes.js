@@ -228,7 +228,8 @@ router.put('/pessoas/:id', async (req, res) => {
 /* ROTAS VENDA */
 router.get('/vendas', async (req, res) => {
     try {
-        const vendas = await Venda.get();
+        const {date1, date2, pessoa, produto} = req.query;
+        const vendas = await Venda.getByFilters(date1, date2, pessoa, produto);
         res.json(vendas);
     } catch (error) {
         console.error(error);

@@ -55,6 +55,36 @@ export default class Venda {
             }); 
         });
     }
+
+    static async getByFilters(date1, date2, pessoa, produto) {
+        let sql = 'SELECT v.* FROM vendas v';
+        let where = [];
+    
+        if (date1 && date2) {
+            where.push(`v.data BETWEEN "${date1}" AND "${date2}"`);
+        }
+        if (pessoa) {
+            where.push(`v.pessoa_fk = ${pessoa}`);
+        }
+        if (produto) {
+            sql += ' INNER JOIN itensvenda ON v.id = itensvenda.venda_fk';
+            where.push(`itensvenda.produto_fk = ${produto}`);
+        }
+        if (where.length > 0) {
+            sql += ' WHERE ' + where.join(' AND ');
+        }
+        
+        return new Promise((resolve, reject) => {
+            query(sql, function(result) {
+                if (result) {
+                    resolve(result);
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
+    
 }
 
 /* 
