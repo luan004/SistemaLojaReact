@@ -12,6 +12,7 @@ import CadProduto from './views/cadastros/CadProduto';
 import MovVenda from './views/movimentos/MovVenda';
 import RelPessoa from './views/relatorios/RelPessoa';
 import RelVenda from './views/relatorios/RelVenda';
+import Sobre from './views/Sobre';
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
       <MenuBar />
 
       <Routes>
-          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/" element={<Sobre />} />
           <Route path="/cadastros/pessoas" element={<CadPessoa />} />
           <Route path="/cadastros/cidades" element={<CadCidade />} />
           <Route path="/cadastros/bairros" element={<CadBairro />} />
@@ -27,7 +28,7 @@ function App() {
           <Route path="/movimentos/vendas" element={<MovVenda />} />
           <Route path="/relatorios/pessoas" element={<RelPessoa />} />
           <Route path="/relatorios/vendas" element={<RelVenda />} />
-          <Route path="*" element={<h1>Not Found</h1>} />
+          <Route path="*" element={<Sobre />} />
       </Routes>
 
       <StatusBar />

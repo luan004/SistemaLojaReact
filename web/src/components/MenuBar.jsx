@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faCity, faBox, faRoad } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faBox, faRoad, faTreeCity, faCartShopping, faAddressBook, faCartArrowDown } from '@fortawesome/free-solid-svg-icons'
 
 import "../style/MenuBar.css";
 
@@ -20,7 +20,7 @@ const MenuBar = () => {
                         </li>
                         <li>
                             <Link to="/cadastros/cidades">
-                                <FontAwesomeIcon icon={faCity} />
+                                <FontAwesomeIcon icon={faTreeCity} />
                                 <span>Cidades</span>
                             </Link>
                         </li>
@@ -41,18 +41,35 @@ const MenuBar = () => {
                 <li className="menu-item">
                     Movimentos
                     <ul className="sub-menu">
-                        <li><Link to="/movimentos/vendas">Vendas</Link></li>
+                        <li>
+                            <Link to="/movimentos/vendas">
+                                <FontAwesomeIcon icon={faCartShopping} />
+                                <span>Vendas</span>
+                            </Link>
+                        </li>
                     </ul>
                 </li>
                 <li className="menu-item">
                     Relatórios
                     <ul className="sub-menu">
-                        <li><Link to="/relatorios/pessoas">Lista de Pessoas</Link></li>
-                        <li><Link to="/relatorios/vendas">Lista de Vendas</Link></li>
+                        <li>
+                            <Link to="/relatorios/pessoas">
+                                <FontAwesomeIcon icon={faAddressBook} />
+                                <span>Lista de Pessoas</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/relatorios/vendas">
+                                <FontAwesomeIcon icon={faCartArrowDown} />
+                                <span>Lista de Vendas</span>
+                            </Link>
+                        </li>
                     </ul>
                 </li>
                 <li className="menu-item">
-                    Sobre
+                    <Link to={"/"}>
+                        <span>Sobre</span>
+                    </Link>
                 </li>
                 <li className="menu-item-right">
                     Admin
