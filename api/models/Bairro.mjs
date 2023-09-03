@@ -1,15 +1,14 @@
 import query from '../Data.mjs';
 
-export default class Cidade {
-    constructor(id, nome, uf) {
+export default class Bairro {
+    constructor(id, nome) {
         this.id = id;
         this.nome = nome;
-        this.uf = uf;
     }
 
     create() {
         return new Promise((resolve, reject) => {
-            query(`INSERT INTO cidades VALUES (null, "${this.nome}", "${this.uf}")`, function(result) {
+            query(`INSERT INTO bairros VALUES (null, "${this.nome}")`, function(result) {
                 if (result) {
                     resolve(result);
                 } else {
@@ -21,7 +20,7 @@ export default class Cidade {
 
     delete() {
         return new Promise((resolve, reject) => {
-            query(`DELETE FROM cidades WHERE id = ${this.id}`, function(result) {
+            query(`DELETE FROM bairros WHERE id = ${this.id}`, function(result) {
                 if (result) {
                     resolve(result);
                 } else {
@@ -33,7 +32,7 @@ export default class Cidade {
 
     static async get() {
         return new Promise((resolve, reject) => {
-            query('SELECT * FROM cidades', function(result) {
+            query('SELECT * FROM bairros', function(result) {
                 if (result) {
                     resolve(result);
                 } else {
@@ -45,7 +44,7 @@ export default class Cidade {
 
     update() {
         return new Promise((resolve, reject) => {
-            query(`UPDATE cidades SET nome = "${this.nome}", uf = "${this.uf}" WHERE id = ${this.id}`, function(result) {
+            query(`UPDATE bairros SET nome = "${this.nome}" WHERE id = ${this.id}`, function(result) {
                 if (result) {
                     resolve(result);
                 } else {

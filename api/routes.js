@@ -1,5 +1,6 @@
 import express from 'express';
 import Cidade from './models/Cidade.mjs';
+import Bairro from './models/Bairro.mjs';
 
 const router = express.Router();
 
@@ -45,6 +46,51 @@ router.put('/cidades/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao atualizar cidade.' });
+    }
+});
+
+/* ROTAS BAIRRO */
+router.get('/bairros', async (req, res) => {
+    try {
+        const bairros = await Bairro.get();
+        res.json(bairros);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar bairros.' });
+    }
+});
+router.post('/bairros', async (req, res) => {
+    const { nome } = req.body;
+    try {
+        const bairro = new Bairro(null, nome);
+        await bairro.create();
+        res.status(201).json({ message: 'Bairro criado com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao criar bairro.' });
+    }
+});
+router.delete('/bairros/:id', async (req, res) => {
+    const bairroId = req.params.id;
+    try {
+        const bairro = new Bairro(bairroId, null);
+        await bairro.delete();
+        res.json({ message: 'Bairro deletado com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao deletar bairro.' });
+    }
+});
+router.put('/bairros/:id', async (req, res) => {
+    const bairroId = req.params.id;
+    const { nome } = req.body;
+    try {
+        const bairro = new Bairro(bairroId, nome);
+        await bairro.update();
+        res.json({ message: 'Bairro atualizado com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao atualizar bairro.' });
     }
 });
 
