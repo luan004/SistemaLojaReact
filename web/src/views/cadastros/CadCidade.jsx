@@ -5,7 +5,7 @@ import '../../style/Cad.css';
 function CadCidade() {
   const [listar, setListar] = useState(true);
   const [incluir, setIncluir] = useState(false);
-  const [cidades, setCidades] = useState([]);
+  const [itens, setItem] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -20,33 +20,18 @@ function CadCidade() {
     setIncluir(true);
   }
 
-  const editItem = (cidade) => {
-    setEditMode(true);
-    setEditingItem(cidade);
-    showIncluir();
-    
-    document.getElementById('cod').value = cidade.id;
-    document.getElementById('nome').value = cidade.nome;
-    document.getElementById('uf').value = cidade.uf;
+  function openModal() {
+    setShowModal(true);
   };
 
-  useEffect(() => {
-    if (listar) {
-      loadLista();
-    }
-  }, [listar]);
-
-  const loadLista = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/api/cidades");
-      if (!response.ok) {
-        throw new Error("Erro ao buscar dados da API");
-      }
-      const data = await response.json();
-      setCidades(data);
-    } catch (error) {
-      console.error("Erro ao buscar dados da API:", error);
-    }
+  function editItem(item) {
+    setEditMode(true);
+    setEditingItem(item);
+    showIncluir();
+    
+    document.getElementById('cod').value = item.id;
+    document.getElementById('nome').value = item.nome;
+    document.getElementById('uf').value = item.uf;
   };
 
   function cancel() {
@@ -55,67 +40,70 @@ function CadCidade() {
     setEditMode(false);
   }
 
-  function submit() {
+  function closeModal() {
+    setShowModal(false);
+  };
+
+  useEffect(() => { // Executar loadLista quando o componente for montado
+    if (listar) {
+      loadLista();
+    }
+  }, [listar]);
+
+  const loadLista = async () => { // LISTAR ITEMS
+    try {
+      const response = await fetch("http://localhost:3001/api/cidades");
+      if (!response.ok) {
+        throw new Error("Erro ao buscar dados da API");
+      }
+      const data = await response.json();
+      setItem(data);
+    } catch (error) {
+      console.error("Erro ao buscar dados da API:", error);
+    }
+  };
+
+  function submit() { // CRIAR ITEM OU EDITAR ITEM
     if (editMode) {
-      const editCidade = {
+      const edited = {
         id: document.getElementById('cod').value,
         nome: document.getElementById('nome').value,
         uf: document.getElementById('uf').value,
-      }
+      };
+  
       fetch(`http://localhost:3001/api/cidades/${editingItem.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editCidade),
-      })
-      .then((data) => {
-        setEditMode(false);
-        setEditingItem(null);
-        cancel();
+        body: JSON.stringify(edited),
       })
     } else {
-      const newCidade = {
+      const newItem = {
         nome: document.getElementById('nome').value,
         uf: document.getElementById('uf').value,
       };
+  
       fetch("http://localhost:3001/api/cidades", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newCidade),
-      })
-      .then((data) => {
-        cancel();
+        body: JSON.stringify(newItem),
       })
     }
+    cancel();
   }
   
-  const openModal = () => {
-    setShowModal(true);
-  };
-
-  const confirmModal = (cidade) => {
-    fetch(`http://localhost:3001/api/cidades/${cidade.id}`, {
+  function confirmModal(item) { // EXCLUIR ITEM
+    fetch(`http://localhost:3001/api/cidades/${item.id}`, {
       method: "DELETE",
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erro ao excluir a cidade");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        loadLista();
-      })
+    .then((data) => {
+      loadLista();
+    })
     setShowModal(false);
   };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
 
   return (
     <div className="viewload">
@@ -138,20 +126,20 @@ function CadCidade() {
                 </tr>
             </thead>
             <tbody>
-              {cidades.map((cidade) => (
-                <tr key={cidade.id}>
-                  <td>{cidade.id}</td>
-                  <td>{cidade.nome}</td>
-                  <td>{cidade.uf}</td>
+              {itens.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>{item.nome}</td>
+                  <td>{item.uf}</td>
                   <td>
-                    <button className="btn-action edit" onClick={() => editItem(cidade)}>Editar</button>
+                    <button className="btn-action edit" onClick={() => editItem(item)}>Editar</button>
                     <button className="btn-action remove" onClick={openModal}>Excluir</button>
                     { showModal && (
                       <Modal 
                         message="Deseja realmente excluir o registro?"
                         confirmText="Sim"
                         cancelText="Não"
-                        onConfirm={() => confirmModal(cidade)}
+                        onConfirm={() => confirmModal(item)}
                         onClose={closeModal}
                       />
                     )}
