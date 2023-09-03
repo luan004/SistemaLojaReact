@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "../../components/Modal";
 import '../../style/Cad.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPenToSquare, faFloppyDisk, faXmark, faBox } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faPenToSquare, faXmark, faBox, faCartShopping } from '@fortawesome/free-solid-svg-icons'
 
 function MovVenda() {
   const [listar, setListar] = useState(true);
@@ -62,7 +62,7 @@ function MovVenda() {
     } catch {
       setPrecoUnit(null);
       setProdutoSelec(null);
-      setSubtotal(null);
+      setSubtotal(null);  
     }
   }
 
@@ -203,16 +203,10 @@ function MovVenda() {
         body: JSON.stringify(edited),
       })
     } else {
-      const newItem = {
-        nome: document.getElementById('nome').value,
-        cidade_fk: document.getElementById('cidade').value,
-        bairro_fk: document.getElementById('bairro').value,
-        cep: document.getElementById('cep').value,
-        endereco: document.getElementById('endereco').value,
-        numero: document.getElementById('numero').value,
-        complemento: document.getElementById('complemento').value,
-        telefone: document.getElementById('telefone').value,
-        email: document.getElementById('email').value
+      const newVenda = {
+        data: document.getElementById('date').value,
+        pessoa_fk: document.getElementById('pessoa').value,
+        produtos: produtosAdd
       };
   
       fetch("http://localhost:3001/api/pessoas", {
@@ -220,7 +214,7 @@ function MovVenda() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newItem),
+        body: JSON.stringify(newVenda),
       })
     }
     cancel();
@@ -377,9 +371,15 @@ function MovVenda() {
             </tbody>
           </table>
             <div className="input-row bottom">
+              <div className="input">
+                <label htmlFor="total">Total</label>
+                <input type="number" name="total" id="total" value={produtosAdd.reduce((total, produto) => total + parseFloat(produto.subtotal), 0).toFixed(2)} disabled/>
+              </div>
+            </div>
+            <div className="input-row">
               <button type="button" onClick={submit} className="btn green">
-                <FontAwesomeIcon icon={faFloppyDisk} />
-                Salvar
+              <FontAwesomeIcon icon={faCartShopping} />
+                Efetuar Venda
               </button>
               <button type="button" onClick={cancel} className="btn red">
                 <FontAwesomeIcon icon={faXmark} />
