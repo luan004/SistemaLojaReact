@@ -33,7 +33,6 @@ function CadBairro() {
     
     document.getElementById('cod').value = item.id;
     document.getElementById('nome').value = item.nome;
-    document.getElementById('uf').value = item.uf;
   };
 
   function cancel() {
@@ -54,7 +53,7 @@ function CadBairro() {
 
   const loadLista = async () => { // LISTAR ITEMS
     try {
-      const response = await fetch("http://localhost:3001/api/cidades");
+      const response = await fetch("http://localhost:3001/api/bairros");
       if (!response.ok) {
         throw new Error("Erro ao buscar dados da API");
       }
@@ -69,11 +68,10 @@ function CadBairro() {
     if (editMode) {
       const edited = {
         id: document.getElementById('cod').value,
-        nome: document.getElementById('nome').value,
-        uf: document.getElementById('uf').value,
+        nome: document.getElementById('nome').value
       };
   
-      fetch(`http://localhost:3001/api/cidades/${editingItem.id}`, {
+      fetch(`http://localhost:3001/api/bairros/${editingItem.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -82,11 +80,10 @@ function CadBairro() {
       })
     } else {
       const newItem = {
-        nome: document.getElementById('nome').value,
-        uf: document.getElementById('uf').value,
+        nome: document.getElementById('nome').value
       };
   
-      fetch("http://localhost:3001/api/cidades", {
+      fetch("http://localhost:3001/api/bairros", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +95,7 @@ function CadBairro() {
   }
   
   function confirmModal(item) { // EXCLUIR ITEM
-    fetch(`http://localhost:3001/api/cidades/${item.id}`, {
+    fetch(`http://localhost:3001/api/bairros/${item.id}`, {
       method: "DELETE",
     })
     .then((data) => {
@@ -122,7 +119,7 @@ function CadBairro() {
             <thead>
                 <tr>
                   <th>Código</th>
-                  <th>Nome da Cidade</th>
+                  <th>Nome do Bairro</th>
                   <th>Ações</th>
                 </tr>
             </thead>
