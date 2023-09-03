@@ -9,7 +9,11 @@ const con = mysql.createConnection({
 
 export default function query(sql, callback) {
     con.query(sql, function(err, result) {
-        if (err) throw err;
-        callback(result);
+        if (err) {
+            console.error(err);
+            callback(null);
+        } else {
+            callback(result);
+        }
     });
 }

@@ -1,6 +1,7 @@
 import express from 'express';
 import Cidade from './models/Cidade.mjs';
 import Bairro from './models/Bairro.mjs';
+import Produto from './models/Produto.mjs';
 
 const router = express.Router();
 
@@ -91,6 +92,51 @@ router.put('/bairros/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao atualizar bairro.' });
+    }
+});
+
+/* ROTAS PRODUTO */
+router.get('/produtos', async (req, res) => {
+    try {
+        const produtos = await Produto.get();
+        res.json(produtos);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar produtos.' });
+    }
+});
+router.post('/produtos', async (req, res) => {
+    const { nome, valor } = req.body;
+    try {
+        const produto = new Produto(null, nome, valor);
+        await produto.create();
+        res.status(201).json({ message: 'Produto criado com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao criar produto.' });
+    }
+});
+router.delete('/produtos/:id', async (req, res) => {
+    const produtoId = req.params.id;
+    try {
+        const produto = new Produto(produtoId, null, null);
+        await produto.delete();
+        res.json({ message: 'Produto deletado com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao deletar produto.' });
+    }
+});
+router.put('/produtos/:id', async (req, res) => {
+    const produtoId = req.params.id;
+    const { nome, valor } = req.body;
+    try {
+        const produto = new Produto(produtoId, nome, valor);
+        await produto.update();
+        res.json({ message: 'Produto atualizado com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao atualizar produto.' });
     }
 });
 
