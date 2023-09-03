@@ -36,8 +36,8 @@ function CadPessoa() {
     
     document.getElementById('cod').value = item.id;
     document.getElementById('nome').value = item.nome;
-    document.getElementById('cidade').value = item.cidade;
-    document.getElementById('bairro').value = item.bairro;
+    document.getElementById('cidade').value = item.cidade_fk;
+    document.getElementById('bairro').value = item.bairro_fk;
     document.getElementById('cep').value = item.cep;
     document.getElementById('endereco').value = item.endereco;
     document.getElementById('numero').value = item.numero;
@@ -97,12 +97,24 @@ function CadPessoa() {
 
   async function loadLista() { // LISTAR ITEMS
     try {
-      const response = await fetch("http://localhost:3001/api/cidades");
+      const response = await fetch("http://localhost:3001/api/pessoas");
       if (!response.ok) {
         throw new Error("Erro ao buscar dados da API");
       }
+
       const data = await response.json();
-      setItem(data);
+      const dataWithCidade = await Promise.all(data.map(async (item) => {
+        const response = await fetch(`http://localhost:3001/api/cidades/${item.cidade_fk}`);
+        if (!response.ok) {
+          throw new Error("Erro ao buscar dados da API");
+        }
+        const data = await response.json();
+        return {
+          ...item,
+          cidade_name: data.nome
+        }
+      }));
+      setItem(dataWithCidade);
     } catch (error) {
       console.error("Erro ao buscar dados da API:", error);
     }
@@ -113,8 +125,8 @@ function CadPessoa() {
       const edited = {
         id: document.getElementById('cod').value,
         nome: document.getElementById('nome').value,
-        cidade: document.getElementById('cidade').value,
-        bairro: document.getElementById('bairro').value,
+        cidade_fk: document.getElementById('cidade').value,
+        bairro_fk: document.getElementById('bairro').value,
         cep: document.getElementById('cep').value,
         endereco: document.getElementById('endereco').value,
         numero: document.getElementById('numero').value,
@@ -123,7 +135,7 @@ function CadPessoa() {
         email: document.getElementById('email').value
       };
   
-      fetch(`http://localhost:3001/api/cidades/${editingItem.id}`, {
+      fetch(`http://localhost:3001/api/pessoas/${editingItem.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -133,8 +145,8 @@ function CadPessoa() {
     } else {
       const newItem = {
         nome: document.getElementById('nome').value,
-        cidade: document.getElementById('cidade').value,
-        bairro: document.getElementById('bairro').value,
+        cidade_fk: document.getElementById('cidade').value,
+        bairro_fk: document.getElementById('bairro').value,
         cep: document.getElementById('cep').value,
         endereco: document.getElementById('endereco').value,
         numero: document.getElementById('numero').value,
@@ -143,7 +155,7 @@ function CadPessoa() {
         email: document.getElementById('email').value
       };
   
-      fetch("http://localhost:3001/api/cidades", {
+      fetch("http://localhost:3001/api/pessoas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,7 +167,7 @@ function CadPessoa() {
   }
   
   function confirmModal(item) { // EXCLUIR ITEM
-    fetch(`http://localhost:3001/api/cidades/${item.id}`, {
+    fetch(`http://localhost:3001/api/pessoas/${item.id}`, {
       method: "DELETE",
     })
     .then((data) => {
@@ -190,7 +202,7 @@ function CadPessoa() {
                 <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>{item.nome}</td>
-                  <td>{item.cidade}</td>
+                  <td>{item.cidade_name}</td>
                   <td>{item.telefone}</td>
                   <td>
                     <button className="btn-action edit" onClick={() => editItem(item)}>
@@ -231,7 +243,7 @@ function CadPessoa() {
             <div className="input-row">
               <div className="input">
                 <label htmlFor="cidade">Cidade</label>
-                <select name="cidade">
+                <select name="cidade" id="cidade">
                   {cidades && cidades.map((cidade) => (
                     <option key={cidade.id} value={cidade.id}>{cidade.nome}</option>
                   ))}
@@ -239,7 +251,7 @@ function CadPessoa() {
               </div>
               <div className="input">
                 <label htmlFor="bairro">Bairro</label>
-                <select name="bairro">
+                <select name="bairro" id="bairro">
                   {bairros && bairros.map((bairro) => (
                     <option key={bairro.id} value={bairro.id}>{bairro.nome}</option>
                   ))}
@@ -247,7 +259,7 @@ function CadPessoa() {
               </div>
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="cep">CEP</label>
-                <input type="text" id="nome" name="cep" />
+                <input type="text" id="cep" name="cep" />
               </div>
             </div>
             <div className="input-row"> 

@@ -54,4 +54,16 @@ export default class Cidade {
             }); 
         });
     }
+
+    static async getById(id) {
+        return new Promise((resolve, reject) => {
+            query(`SELECT * FROM cidades WHERE id = ${id}`, function(result) {
+                if (result) {
+                    resolve(result[0]);
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
 }

@@ -2,6 +2,7 @@ import express from 'express';
 import Cidade from './models/Cidade.mjs';
 import Bairro from './models/Bairro.mjs';
 import Produto from './models/Produto.mjs';
+import Pessoa from './models/Pessoa.mjs';
 
 const router = express.Router();
 
@@ -13,6 +14,16 @@ router.get('/cidades', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao buscar cidades.' });
+    }
+});
+router.get('/cidades/:id', async (req, res) => {
+    const cidadeId = req.params.id;
+    try {
+        const cidade = await Cidade.getById(cidadeId);
+        res.json(cidade);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar cidade.' });
     }
 });
 router.post('/cidades', async (req, res) => {
@@ -137,6 +148,51 @@ router.put('/produtos/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao atualizar produto.' });
+    }
+});
+
+/* ROTAS PESSOAS */
+router.get('/pessoas', async (req, res) => {
+    try {
+        const pessoas = await Pessoa.get();
+        res.json(pessoas);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar pessoas.' });
+    }
+});
+router.post('/pessoas', async (req, res) => {
+    const { nome, cidade_fk, bairro_fk, cep, endereco, numero, complemento, telefone, email } = req.body;
+    try {
+        const pessoa = new Pessoa(null, nome, cidade_fk, bairro_fk, cep, endereco, numero, complemento, telefone, email);
+        await pessoa.create();
+        res.status(201).json({ message: 'Pessoa criada com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao criar pessoa.' });
+    }
+});
+router.delete('/pessoas/:id', async (req, res) => {
+    const pessoaId = req.params.id;
+    try {
+        const pessoa = new Pessoa(pessoaId, null, null, null, null, null, null, null, null, null);
+        await pessoa.delete();
+        res.json({ message: 'Pessoa deletada com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao deletar pessoa.' });
+    }
+});
+router.put('/pessoas/:id', async (req, res) => {
+    const pessoaId = req.params.id;
+    const { nome, cidade_fk, bairro_fk, cep, endereco, numero, complemento, telefone, email } = req.body;
+    try {
+        const pessoa = new Pessoa(pessoaId, nome, cidade_fk, bairro_fk, cep, endereco, numero, complemento, telefone, email);
+        await pessoa.update();
+        res.json({ message: 'Pessoa atualizada com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao atualizar pessoa.' });
     }
 });
 
