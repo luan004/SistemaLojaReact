@@ -259,7 +259,7 @@ function CadPessoa() {
               </div>
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="cep">CEP</label>
-                <input type="text" id="cep" name="cep" />
+                <input type="text" id="cep" name="cep" maxLength={9} minLength={9} />
               </div>
             </div>
             <div className="input-row"> 
@@ -269,7 +269,7 @@ function CadPessoa() {
               </div>
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="numero">Número</label>
-                <input type="number" id="numero" name="numero" />
+                <input type="number" id="numero" name="numero" maxLength={11} />
               </div>
               <div className="input">
                 <label htmlFor="complemento">Complemento</label>
