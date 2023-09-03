@@ -7,18 +7,22 @@ export default class Cidade {
         this.uf = uf;
     }
 
-    create(ifSuccess) {
-        query(`INSERT INTO cidades VALUES (null, "${this.nome}", "${this.uf}")`, function(result) {
-            if (result) {
-                ifSuccess(result);
-            }
+    create() {
+        return new Promise((resolve, reject) => {
+            query(`INSERT INTO cidades VALUES (null, "${this.nome}", "${this.uf}")`, function(result) {
+                if (result) {
+                    resolve(result);
+                } else {
+                    reject();
+                }
+            });
         });
     }
 
-    delete(ifSuccess) {
+    delete() {
         query(`DELETE FROM cidades WHERE id = ${this.id}`, function(result) {
             if (result) {
-                ifSuccess(result);
+                
             }
         });
     }

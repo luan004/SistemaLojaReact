@@ -27,4 +27,35 @@ export default class Pessoa {
             }
         });
     }
+
+    static async getAllPeople() {
+        return new Promise((resolve, reject) => {
+            query('SELECT * FROM pessoas', function(result) {
+                if (result) {
+                    resolve(result);
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
 }
+
+/* 
+SQL
+CREATE TABLE pessoas (
+    id INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    cidade_fk INT NOT NULL,
+    bairro_fk INT NOT NULL,
+    cep VARCHAR(255) NOT NULL,
+    endereco VARCHAR(255) NOT NULL,
+    numero VARCHAR(255) NOT NULL,
+    complemento VARCHAR(255) NOT NULL,
+    telefone VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (cidade_fk) REFERENCES cidades(id),
+    FOREIGN KEY (bairro_fk) REFERENCES bairros(id)
+);
+*/

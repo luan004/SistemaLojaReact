@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import '../../style/CadPessoa.css';
+import '../../style/Cad.css';
 
 function CadPessoa() {
   const [listar, setListar] = useState(true);
