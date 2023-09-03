@@ -156,7 +156,8 @@ router.put('/produtos/:id', async (req, res) => {
 /* ROTAS PESSOAS */
 router.get('/pessoas', async (req, res) => {
     try {
-        const pessoas = await Pessoa.get();
+        const { nome, cidade, bairro } = req.query;
+        const pessoas = await Pessoa.getByFilters(cidade, bairro, nome);
         res.json(pessoas);
     } catch (error) {
         console.error(error);
@@ -173,6 +174,22 @@ router.get('/pessoas/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar pessoa.' });
     }
 });
+
+
+//get with filters to cidade, bairro and name, but is not necessary to use all filters
+router.get('/pessoas/:cidade/:bairro/:nome', async (req, res) => {
+    const cidade = req.params.cidade;
+    const bairro = req.params.bairro;
+    const nome = req.params.nome;
+    try {
+        const pessoa = await Pessoa.getByFilters(cidade, bairro, nome);
+        res.json(pessoa);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar pessoa.' });
+    }
+});
+
 router.post('/pessoas', async (req, res) => {
     const { nome, cidade_fk, bairro_fk, cep, endereco, numero, complemento, telefone, email } = req.body;
     try {

@@ -73,6 +73,33 @@ export default class Pessoa {
             });
         });
     }
+
+    static async getByFilters(cidade, bairro, nome) {
+        return new Promise((resolve, reject) => {
+            let sql = 'SELECT * FROM pessoas WHERE 1';
+    
+            if (cidade) {
+                sql += ` AND cidade_fk = ${cidade}`;
+            }
+    
+            if (bairro) {
+                sql += ` AND bairro_fk = ${bairro}`;
+            }
+    
+            if (nome) {
+                sql += ` AND nome LIKE '%${nome}%'`;
+            }
+            
+            query(sql, function (result) {
+                if (result) {
+                    resolve(result);
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
+    
 }
 
 /* 

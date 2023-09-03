@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import '../../style/Cad.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPenToSquare, faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faFilter } from '@fortawesome/free-solid-svg-icons'
 
 function RelPessoa() {
   const [itens, setItem] = useState([]);
@@ -9,8 +9,10 @@ function RelPessoa() {
   const [cidades, setCidades] = useState([]);
   const [bairros, setBairros] = useState([]);
 
-  loadComboBoxCidade();
-  loadComboBoxBairro();
+    useEffect(() => {
+        loadComboBoxCidade();
+        loadComboBoxBairro();
+    }, []);
 
   async function loadComboBoxCidade () {
     try {
@@ -39,27 +41,31 @@ function RelPessoa() {
   };
 
   async function loadLista() { // LISTAR ITEMS
+    const filters = {
+        nome: document.getElementById("nome").value,
+        cidade: document.getElementById("cidade").value,
+        bairro: document.getElementById("bairro").value
+    }
     try {
-      const response = await fetch("http://localhost:3001/api/pessoas");
-      if (!response.ok) {
-        throw new Error("Erro ao buscar dados da API");
-      }
-      const data = await response.json();
-      const dataWithCidade = await Promise.all(data.map(async (item) => {
-        console.log(item);
-        const response = await fetch(`http://localhost:3001/api/cidades/${item.cidade_fk}`);
+        const response = await fetch(`http://localhost:3001/api/pessoas?cidade=${filters.cidade}&bairro=${filters.bairro}&nome=${filters.nome}`);
         if (!response.ok) {
-          throw new Error("Erro ao buscar dados da API");
+            throw new Error("Erro ao buscar dados da API");
         }
         const data = await response.json();
-        return {
-          ...item,
-          cidade_name: data.nome
-        }
-      }));
-      setItem(dataWithCidade);
+        const dataWithCidade = await Promise.all(data.map(async (item) => {
+          const response = await fetch(`http://localhost:3001/api/cidades/${item.cidade_fk}`);
+          if (!response.ok) {
+            throw new Error("Erro ao buscar dados da API");
+          }
+          const data = await response.json();
+          return {
+            ...item,
+            cidade_name: data.nome
+          }
+        }));
+        setItem(dataWithCidade);
     } catch (error) {
-      console.error("Erro ao buscar dados da API:", error);
+        console.error("Erro ao buscar dados da API:", error);
     }
   };
 
@@ -75,7 +81,28 @@ function RelPessoa() {
                 <input type="text" id="nome" name="nome" />
             </div>
             <div className="input">
-                <label htmlFor=""></label>
+                <label htmlFor="cidade">Cidade</label>
+                <select id="cidade" name="cidade">
+                    <option value="">Selecione</option>
+                    {cidades.map((item) => (
+                        <option key={item.id} value={item.id}>{item.nome}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="input">
+                <label htmlFor="bairro">Bairro</label>
+                <select id="bairro" name="bairro">
+                    <option value="">Selecione</option>
+                    {bairros.map((item) => (
+                        <option key={item.id} value={item.id}>{item.nome}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="input">
+                <button className="btn green" type="button" onClick={loadLista}>
+                    <FontAwesomeIcon icon={faFilter} />
+                    Listar
+                </button>
             </div>
         </form>
         <table className="table">
