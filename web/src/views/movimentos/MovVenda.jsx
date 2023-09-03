@@ -2,19 +2,18 @@ import React, { useState, useEffect } from "react";
 import Modal from "../../components/Modal";
 import '../../style/Cad.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPenToSquare, faXmark, faBox, faCartShopping } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faXmark, faBox, faCartShopping } from '@fortawesome/free-solid-svg-icons'
 
 function MovVenda() {
   const [listar, setListar] = useState(true);
   const [incluir, setIncluir] = useState(false);
   const [itens, setItem] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
 
   const [pessoas, setPessoas] = useState([]);
   const [produtos, setProdutos] = useState([]);
 
+  const [pessoaSelec, setPessoaSelec] = useState(false);
   const [produtoSelec, setProdutoSelec] = useState(null);
   const [precoUnit, setPrecoUnit] = useState(null);
   const [subtotal, setSubtotal] = useState(null);
@@ -48,6 +47,16 @@ function MovVenda() {
 
     if (produtosAdd.filter((produto) => produto.id === item.id).length === 0) {
       setProdutoAdd([...produtosAdd, item]);
+    }
+  }
+
+  function pessoaChange() {
+    try {
+      const pessoaid = document.getElementById('pessoa').value;
+      const pessoa = pessoas.find((pessoa) => pessoa.id === parseInt(pessoaid));
+      setPessoaSelec(pessoa);
+    } catch {
+      setPessoaSelec(null);
     }
   }
 
@@ -87,27 +96,10 @@ function MovVenda() {
     setShowModal(true);
   };
 
-  function editItem(item) {
-    setEditMode(true);
-    setEditingItem(item);
-    showIncluir();
-    
-    document.getElementById('cod').value = item.id;
-    document.getElementById('nome').value = item.nome;
-    document.getElementById('cidade').value = item.cidade_fk;
-    document.getElementById('bairro').value = item.bairro_fk;
-    document.getElementById('cep').value = item.cep;
-    document.getElementById('endereco').value = item.endereco;
-    document.getElementById('numero').value = item.numero;
-    document.getElementById('complemento').value = item.complemento;
-    document.getElementById('telefone').value = item.telefone;
-    document.getElementById('email').value = item.email;
-  };
 
   function cancel() {
     const form = document.getElementById('form');
     form.reset();
-    setEditMode(false);
   }
 
   function closeModal() {
@@ -122,12 +114,16 @@ function MovVenda() {
 
   useEffect(() => { // Executar loadComboBoxCidade quando o componente for montado
     if (incluir) {
-      const data = new Date();
-      document.getElementById('date').value = data.toISOString().split('T')[0];
+      loadDate();
       loadComboBoxPessoas();
       loadComboBoxProdutos();
     }
   }, [incluir]);
+
+  function loadDate() {
+    const data = new Date();
+    document.getElementById('date').value = data.toISOString().split('T')[0];
+  }
 
   async function loadComboBoxPessoas () {
     try {
@@ -157,71 +153,73 @@ function MovVenda() {
 
   async function loadLista() { // LISTAR ITEMS
     try {
-      const response = await fetch("http://localhost:3001/api/pessoas");
+      const response = await fetch("http://localhost:3001/api/vendas");
       if (!response.ok) {
         throw new Error("Erro ao buscar dados da API");
       }
-
       const data = await response.json();
-      const dataWithCidade = await Promise.all(data.map(async (item) => {
-        const response = await fetch(`http://localhost:3001/api/cidades/${item.cidade_fk}`);
+      const dataWithPessoa = await Promise.all(data.map(async (item) => {
+        const response = await fetch(`http://localhost:3001/api/pessoas/${item.pessoa_fk}`);
         if (!response.ok) {
           throw new Error("Erro ao buscar dados da API");
         }
         const data = await response.json();
         return {
           ...item,
-          cidade_name: data.nome
+          pessoa_name: data.nome
         }
       }));
-      setItem(dataWithCidade);
+      setItem(dataWithPessoa);
     } catch (error) {
       console.error("Erro ao buscar dados da API:", error);
     }
   };
 
-  function submit() { // CRIAR ITEM OU EDITAR ITEM
-    if (editMode) {
-      const edited = {
-        id: document.getElementById('cod').value,
-        nome: document.getElementById('nome').value,
-        cidade_fk: document.getElementById('cidade').value,
-        bairro_fk: document.getElementById('bairro').value,
-        cep: document.getElementById('cep').value,
-        endereco: document.getElementById('endereco').value,
-        numero: document.getElementById('numero').value,
-        complemento: document.getElementById('complemento').value,
-        telefone: document.getElementById('telefone').value,
-        email: document.getElementById('email').value
-      };
-  
-      fetch(`http://localhost:3001/api/pessoas/${editingItem.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(edited),
-      })
-    } else {
-      const newVenda = {
-        data: document.getElementById('date').value,
-        pessoa_fk: document.getElementById('pessoa').value,
-        produtos: produtosAdd
-      };
-  
-      fetch("http://localhost:3001/api/pessoas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newVenda),
-      })
-    }
+  function submit() { // CRIAR ITEM
+    const newVenda = {
+      data: document.getElementById('date').value,
+      pessoa_fk: document.getElementById('pessoa').value,
+      vrtotal: produtosAdd.reduce((total, produto) => total + parseFloat(produto.subtotal), 0).toFixed(2)
+    };
+
+    fetch("http://localhost:3001/api/vendas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newVenda),
+    })
+    .then((response) => response.json()) // Parse a resposta como JSON
+    .then((data) => {
+      produtosAdd.forEach((produto) => {
+        const newProductVenda = {
+          venda_fk: data.vendaId,
+          produto_fk: produto.id,
+          unidades: produto.unidades,
+          vrunitario: produto.vrunitario,
+          subtotal: produto.subtotal
+        };
+
+        fetch("http://localhost:3001/api/itensvenda", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newProductVenda),
+        });
+      });
+    });
     cancel();
+    setProdutoAdd([]);
+    setProdutoSelec(null);
+    setPrecoUnit(null);
+    setUnidades(1);
+    setSubtotal(null);
+    loadDate();
   }
   
   function confirmModal(item) { // EXCLUIR ITEM
-    fetch(`http://localhost:3001/api/pessoas/${item.id}`, {
+    fetch(`http://localhost:3001/api/vendas/${item.id}`, {
       method: "DELETE",
     })
     .then((data) => {
@@ -230,10 +228,23 @@ function MovVenda() {
     setShowModal(false);
   };
 
+  function convertData(data) {
+    const dateObject = new Date(data);
+    const day = dateObject.getUTCDate();
+    const month = dateObject.getUTCMonth() + 1;
+    const year = dateObject.getUTCFullYear();
+  
+    const formattedDay = day < 10 ? `0${day}` : day;
+    const formattedMonth = month < 10 ? `0${month}` : month;
+  
+    const commonDateFormat = `${formattedDay}/${formattedMonth}/${year}`;
+    return commonDateFormat;
+  }
+
   return (
     <div className="viewload">
       <div className="title">
-        <span>Cadastro de Pessoas</span>
+        <span>Vendas</span>
       </div>
       <div className="window">
         <div className="tab-menu">
@@ -245,9 +256,9 @@ function MovVenda() {
             <thead>
                 <tr>
                   <th>Código</th>
-                  <th>Nome da Pessoa</th>
-                  <th>Cidade</th>
-                  <th>Telefone</th>
+                  <th>Data</th>
+                  <th>Pessoa</th>
+                  <th>Total</th>
                   <th>Ações</th>
                 </tr>
             </thead>
@@ -255,14 +266,10 @@ function MovVenda() {
               {itens.map((item) => (
                 <tr key={item.id}>
                   <td>{item.id}</td>
-                  <td>{item.nome}</td>
-                  <td>{item.cidade_name}</td>
-                  <td>{item.telefone}</td>
+                  <td>{convertData(item.data)}</td>
+                  <td>{item.pessoa_name}</td>
+                  <td>R${item.vrtotal.replace('.',',')}</td>
                   <td>
-                    <button className="btn-action edit" onClick={() => editItem(item)}>
-                      <FontAwesomeIcon icon={faPenToSquare} />
-                      Editar
-                    </button>
                     <button className="btn-action remove" onClick={openModal}>
                       <FontAwesomeIcon icon={faTrash} />
                       Excluir
@@ -295,7 +302,8 @@ function MovVenda() {
               </div>
               <div className="input">
                 <label htmlFor="pessoa">Pessoa</label>
-                <select name="pessoa" id="pessoa">
+                <select name="pessoa" id="pessoa" onChange={pessoaChange}>
+                  <option value=""></option>
                   {pessoas && pessoas.map((pessoa) => (
                     <option key={pessoa.id} value={pessoa.id}>{pessoa.nome}</option>
                   ))}
@@ -324,7 +332,7 @@ function MovVenda() {
                 <label htmlFor="subtotal">Sub. Total</label>
                 <input type="number" name="subtotal" id="subtotal" value={subtotal || ""} disabled/>
               </div>
-              <div className={`input ${produtoSelec ? "" : "none"}`}>
+              <div className={`input ${produtoSelec&&pessoaSelec ? "" : "none"}`}>
                 <label htmlFor="addproduto">Adicionar Produto</label>
                 <button className="btn green" type="button" id="addproduto" name="addproduto" onClick={addProduto}>
                   <FontAwesomeIcon icon={faBox} />
@@ -335,8 +343,8 @@ function MovVenda() {
             <table className="table">
             <thead>
                 <tr>
-                  <th>Código</th>
-                  <th>Produto</th>
+                  <th>Código do Produto</th>
+                  <th style={{width:"40%"}}>Produto</th>
                   <th>Unidades</th>
                   <th>Vr. Unitário</th>
                   <th>Sub. Total</th>

@@ -1,27 +1,24 @@
 import query from '../Data.mjs';
 
 export default class Venda {
-    constructor(id, data, pessoa_fk) {
+    constructor(id, data, pessoa_fk, vrtotal) {
         this.id = id;
         this.data = data;
         this.pessoa_fk = pessoa_fk;
+        this.vrtotal = vrtotal;
     }
 
     create() {
-        convert = (date) => {
-            let data = date.split('/');
-            return `${data[2]}-${data[1]}-${data[0]}`;
-        }
         return new Promise((resolve, reject) => {
-            query(`INSERT INTO vendas VALUES (null, "${convert(this.data)}", ${this.pessoa_fk})`, function(result) {
-                if (result) {
-                    resolve(result);
-                } else {
-                    reject();
-                }
-            });
+          query(`INSERT INTO vendas VALUES (null, "${this.data}", ${this.pessoa_fk}, ${this.vrtotal})`, function(result) {
+            if (result && result.insertId) { // Verifique se o ID da inserção é válido
+              resolve(result.insertId);
+            } else {
+              reject();
+            }
+          });
         });
-    }
+    }      
 
     delete() {
         return new Promise((resolve, reject) => {

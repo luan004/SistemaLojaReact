@@ -3,6 +3,8 @@ import Cidade from './models/Cidade.mjs';
 import Bairro from './models/Bairro.mjs';
 import Produto from './models/Produto.mjs';
 import Pessoa from './models/Pessoa.mjs';
+import Venda from './models/Venda.mjs';
+import ItemVenda from './models/ItemVenda.mjs';
 
 const router = express.Router();
 
@@ -161,6 +163,16 @@ router.get('/pessoas', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar pessoas.' });
     }
 });
+router.get('/pessoas/:id', async (req, res) => {
+    const pessoaId = req.params.id;
+    try {
+        const pessoa = await Pessoa.getById(pessoaId);
+        res.json(pessoa);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar pessoa.' });
+    }
+});
 router.post('/pessoas', async (req, res) => {
     const { nome, cidade_fk, bairro_fk, cep, endereco, numero, complemento, telefone, email } = req.body;
     try {
@@ -195,5 +207,61 @@ router.put('/pessoas/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar pessoa.' });
     }
 });
+
+/* ROTAS VENDA */
+router.get('/vendas', async (req, res) => {
+    try {
+        const vendas = await Venda.get();
+        res.json(vendas);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar vendas.' });
+    }
+});
+router.post('/vendas', async (req, res) => {
+    const { data, pessoa_fk, vrtotal } = req.body;
+    try {
+      const venda = new Venda(null, data, pessoa_fk, vrtotal);
+      const vendaId = await venda.create(); // Obtenha o ID da venda
+      res.json({ vendaId, message: 'Venda criada com sucesso.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Erro ao criar venda.' });
+    }
+});
+router.delete('/vendas/:id', async (req, res) => {
+    const vendaId = req.params.id;
+    try {
+        const venda = new Venda(vendaId, null, null, null);
+        await venda.delete();
+        res.json({ message: 'Venda deletada com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao deletar venda.' });
+    }
+});
+  
+/* ROTAS ITEMVENDA */
+router.get('/itensvenda', async (req, res) => {
+    try {
+        const itensvenda = await ItemVenda.get();
+        res.json(itensvenda);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao buscar itensvenda.' });
+    }
+});
+router.post('/itensvenda', async (req, res) => {
+    const { venda_fk, produto_fk, unidades, subtotal } = req.body;
+    try {
+        const itemvenda = new ItemVenda(null, venda_fk, produto_fk, unidades, subtotal);
+        await itemvenda.create();
+        res.status(201).json({ message: 'ItemVenda criado com sucesso.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao criar itemvenda.' });
+    }
+});
+
 
 export default router;

@@ -101,9 +101,9 @@ function CadPessoa() {
       if (!response.ok) {
         throw new Error("Erro ao buscar dados da API");
       }
-
       const data = await response.json();
       const dataWithCidade = await Promise.all(data.map(async (item) => {
+        console.log(item);
         const response = await fetch(`http://localhost:3001/api/cidades/${item.cidade_fk}`);
         if (!response.ok) {
           throw new Error("Erro ao buscar dados da API");
