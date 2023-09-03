@@ -71,6 +71,9 @@
     border-radius: 5px;
     margin-left: 5px;
     border: solid 1px;
+    color: white;
+    gap: 5px;
+    display: inline-flex;
 }
 
 .btn-action:hover {
@@ -140,6 +143,10 @@
 .btn {
     cursor: pointer;
     transition: 0.2s;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn:hover {

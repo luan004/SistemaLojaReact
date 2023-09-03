@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Modal from "../../components/Modal";
 import '../../style/Cad.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash, faPenToSquare, faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 function CadCidade() {
   const [listar, setListar] = useState(true);
@@ -132,8 +134,14 @@ function CadCidade() {
                   <td>{item.nome}</td>
                   <td>{item.uf}</td>
                   <td>
-                    <button className="btn-action edit" onClick={() => editItem(item)}>Editar</button>
-                    <button className="btn-action remove" onClick={openModal}>Excluir</button>
+                    <button className="btn-action edit" onClick={() => editItem(item)}>
+                      <FontAwesomeIcon icon={faPenToSquare} />
+                      Editar
+                    </button>
+                    <button className="btn-action remove" onClick={openModal}>
+                      <FontAwesomeIcon icon={faTrash} />
+                      Excluir
+                    </button>
                     { showModal && (
                       <Modal 
                         message="Deseja realmente excluir o registro?"
@@ -166,8 +174,14 @@ function CadCidade() {
               </div>
             </div>
             <div className="input-row bottom">
-              <button type="button" onClick={submit} className="btn green">Salvar</button>
-              <button type="button" onClick={cancel} className="btn red">Cancelar</button>
+              <button type="button" onClick={submit} className="btn green">
+                <FontAwesomeIcon icon={faFloppyDisk} />
+                Salvar
+              </button>
+              <button type="button" onClick={cancel} className="btn red">
+                <FontAwesomeIcon icon={faXmark} />
+                Cancelar
+              </button>
             </div>
           </form>
         </div>
