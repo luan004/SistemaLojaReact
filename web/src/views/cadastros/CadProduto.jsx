@@ -100,6 +100,7 @@ function CadProduto() {
       })
     }
     cancel();
+    listar ? loadLista() : showListar();
   }
   
   function confirmModal(item) { // EXCLUIR ITEM
