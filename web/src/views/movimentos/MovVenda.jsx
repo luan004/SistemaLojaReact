@@ -21,11 +21,6 @@ function MovVenda() {
 
   const [produtosAdd, setProdutoAdd] = useState([]);
 
-  function unidadesChange(event) {
-    setUnidades(event.target.value);
-    produtoChange();
-  }
-
   function confirmModalProduto(produto) { // REMOVER PRODUTO DA VENDA
     const newProdutos = produtosAdd.filter((item) => item.id !== produto.id);
     setProdutoAdd(newProdutos);
@@ -35,7 +30,6 @@ function MovVenda() {
   function addProduto() {
     const produto = produtoSelec;
 
-    const unidades = document.getElementById('unidades').value;
     const subtotal = precoUnit * unidades;
     const item = {
       id: produto.id,
@@ -77,7 +71,6 @@ function MovVenda() {
 
   function calcPrecoTotal(produto) {
     const preco = produto.valor;
-    const unidades = document.getElementById('unidades').value;
     const subtotal = (preco * unidades).toFixed(2);
     setSubtotal(subtotal);
   }
@@ -114,16 +107,10 @@ function MovVenda() {
 
   useEffect(() => { // Executar loadComboBoxCidade quando o componente for montado
     if (incluir) {
-      loadDate();
       loadComboBoxPessoas();
       loadComboBoxProdutos();
     }
   }, [incluir]);
-
-  function loadDate() {
-    const data = new Date();
-    document.getElementById('date').value = data.toISOString().split('T')[0];
-  }
 
   async function loadComboBoxPessoas () {
     try {
@@ -215,10 +202,9 @@ function MovVenda() {
     setPrecoUnit(null);
     setUnidades(1);
     setSubtotal(null);
-    loadDate();
   }
   
-  function confirmModal(item) { // EXCLUIR ITEM
+  function confirmModal(item) {
     fetch(`http://localhost:3001/api/vendas/${item.id}`, {
       method: "DELETE",
     })
@@ -298,7 +284,7 @@ function MovVenda() {
               </div>
               <div className="input" style={{width:"300px"}}>
                 <label htmlFor="date">Data</label>
-                <input type="date" id="date" name="date" disabled/>
+                <input type="date" id="date" name="date" value={new Date().toISOString().split('T')[0]} disabled />
               </div>
               <div className="input">
                 <label htmlFor="pessoa">Pessoa</label>
@@ -322,11 +308,11 @@ function MovVenda() {
               </div>
               <div className="input">
                 <label htmlFor="unidades">Unidades</label>
-                <input type="number" name="unidades" id="unidades" value={unidades} onChange={unidadesChange}/>
+                <input type="number" name="unidades" id="unidades" value={unidades || ""} onChange={(e) => setUnidades(e.target.value)} min="1" />
               </div>
               <div className="input">
                 <label htmlFor="vrunitario">Valor Unitário</label>
-                <input type="number" name="vrunitario" id="vrunitario" value={`R$ ${precoUnit || ""}`} disabled/>
+                <input type="number" name="vrunitario" id="vrunitario" value={precoUnit || ""} disabled/>
               </div>
               <div className="input">
                 <label htmlFor="subtotal">Sub. Total</label>
