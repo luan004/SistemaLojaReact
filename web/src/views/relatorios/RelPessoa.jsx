@@ -9,6 +9,10 @@ function RelPessoa() {
   const [cidades, setCidades] = useState([]);
   const [bairros, setBairros] = useState([]);
 
+  const [nome, setNome] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [bairro, setBairro] = useState("");
+
     useEffect(() => {
         loadComboBoxCidade();
         loadComboBoxBairro();
@@ -42,9 +46,9 @@ function RelPessoa() {
 
   async function loadLista() { // LISTAR ITEMS
     const filters = {
-        nome: document.getElementById("nome").value,
-        cidade: document.getElementById("cidade").value,
-        bairro: document.getElementById("bairro").value
+        nome: nome,
+        cidade: cidade,
+        bairro: bairro
     }
     try {
         const response = await fetch(`http://localhost:3001/api/pessoas?cidade=${filters.cidade}&bairro=${filters.bairro}&nome=${filters.nome}`);
@@ -78,11 +82,11 @@ function RelPessoa() {
         <form>
             <div className="input">
                 <label htmlFor="nome">Parte do Nome</label>
-                <input type="text" id="nome" name="nome" />
+                <input type="text" id="nome" name="nome" value={nome} onChange={(e) => setNome(e.target.value)} />
             </div>
             <div className="input">
                 <label htmlFor="cidade">Cidade</label>
-                <select id="cidade" name="cidade">
+                <select id="cidade" name="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)}>
                     <option value="">Selecione</option>
                     {cidades.map((item) => (
                         <option key={item.id} value={item.id}>{item.nome}</option>
@@ -91,7 +95,7 @@ function RelPessoa() {
             </div>
             <div className="input">
                 <label htmlFor="bairro">Bairro</label>
-                <select id="bairro" name="bairro">
+                <select id="bairro" name="bairro" value={bairro} onChange={(e) => setBairro(e.target.value)}>
                     <option value="">Selecione</option>
                     {bairros.map((item) => (
                         <option key={item.id} value={item.id}>{item.nome}</option>

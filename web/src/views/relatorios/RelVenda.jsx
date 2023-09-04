@@ -9,6 +9,11 @@ function RelVenda() {
   const [pessoas, setPessoas] = useState([]);
   const [produtos, setProdutos] = useState([]);
 
+  const [date1, setDate1] = useState("");
+  const [date2, setDate2] = useState("");
+  const [pessoa, setPessoa] = useState("");
+  const [produto, setProduto] = useState("");
+
     useEffect(() => {
       loadComboBoxPessoas();
       loadComboBoxProdutos();
@@ -42,10 +47,10 @@ function RelVenda() {
 
   async function loadLista() { // LISTAR ITEMS
     const filters = {
-        date1: document.getElementById("date1").value,
-        date2: document.getElementById("date2").value,
-        pessoa: document.getElementById("pessoa").value,
-        produto: document.getElementById("produto").value
+        date1: date1,
+        date2: date2,
+        pessoa: pessoa,
+        produto: produto
     }
     try {
         const response = await fetch(`http://localhost:3001/api/vendas?date1=${filters.date1}&date2=${filters.date2}&pessoa=${filters.pessoa}&produto=${filters.produto}`);
@@ -94,16 +99,16 @@ function RelVenda() {
             <div className="input-row">
               <div className="input">
                   <label htmlFor="date1">De</label>
-                  <input type="date" id="date1" name="date1" />
+                  <input type="date" id="date1" name="date1" value={date1} onChange={(e) => setDate1(e.target.value)} />
               </div>
               <div className="input">
                   <label htmlFor="date2">Até</label>
-                  <input type="date" id="date2" name="date2" />
+                  <input type="date" id="date2" name="date2" value={date2} onChange={(e) => setDate2(e.target.value)} />
               </div>
             </div>
             <div className="input">
                 <label htmlFor="pessoa">Pessoa</label>
-                <select id="pessoa" name="pessoa">
+                <select id="pessoa" name="pessoa" value={pessoa} onChange={(e) => setPessoa(e.target.value)}>
                     <option value="">Selecione</option>
                     {pessoas.map((item) => (
                         <option key={item.id} value={item.id}>{item.nome}</option>
@@ -112,7 +117,7 @@ function RelVenda() {
             </div>
             <div className="input">
                 <label htmlFor="produto">Produto</label>
-                <select id="produto" name="produto">
+                <select id="produto" name="produto" value={produto} onChange={(e) => setProduto(e.target.value)}>
                     <option value="">Selecione</option>
                     {produtos.map((item) => (
                         <option key={item.id} value={item.id}>{item.nome}</option>
