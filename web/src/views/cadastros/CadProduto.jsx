@@ -12,6 +12,10 @@ function CadProduto() {
   const [editMode, setEditMode] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
+  const [cod, setCod] = useState('');
+  const [nome, setNome] = useState('');
+  const [valor, setValor] = useState('');
+
   function showListar() {
     setListar(true);
     setIncluir(false);
@@ -31,14 +35,15 @@ function CadProduto() {
     setEditingItem(item);
     showIncluir();
     
-    document.getElementById('cod').value = item.id;
-    document.getElementById('nome').value = item.nome;
-    document.getElementById('valor').value = item.valor;
+    setCod(item.id);
+    setNome(item.nome);
+    setValor(item.valor);
   };
 
   function cancel() {
-    const form = document.getElementById('form');
-    form.reset();
+    setCod('');
+    setNome('');
+    setValor('');
     setEditMode(false);
   }
 
@@ -68,9 +73,9 @@ function CadProduto() {
   function submit() { // CRIAR ITEM OU EDITAR ITEM
     if (editMode) {
       const edited = {
-        id: document.getElementById('cod').value,
-        nome: document.getElementById('nome').value,
-        valor: document.getElementById('valor').value,
+        id: cod,
+        nome: nome,
+        valor: valor
       };
   
       fetch(`http://localhost:3001/api/produtos/${editingItem.id}`, {
@@ -82,8 +87,8 @@ function CadProduto() {
       })
     } else {
       const newItem = {
-        nome: document.getElementById('nome').value,
-        valor: document.getElementById('valor').value,
+        nome: nome,
+        valor: valor
       };
   
       fetch("http://localhost:3001/api/produtos", {
@@ -162,15 +167,15 @@ function CadProduto() {
             <div className="input-row">
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="cod">Código</label>
-                <input type="number" id="cod" name="cod" disabled/>
+                <input type="number" id="cod" name="cod" value={cod || ''} onChange={e => setCod(e.target.value)} disabled/>
               </div>
               <div className="input">
                 <label htmlFor="nome">Nome do Produto</label>
-                <input type="text" id="nome" name="nome" />
+                <input type="text" id="nome" name="nome" value={nome || ''} onChange={e => setNome(e.target.value)} />
               </div>
               <div className="input" style={{width:"200px"}}>
-                <label htmlFor="valor">Valor</label>
-                <input type="number" step={0.25} id="valor" name="valor" style={{textTransform:"uppercase"}}/>
+                <label htmlFor="valor">Valor (R$)</label>
+                <input type="number" step={0.25} id="valor" name="valor" style={{textTransform:"uppercase"}} value={valor || ''} onChange={e => setValor(e.target.value)} />
               </div>
             </div>
             <div className="input-row bottom">
