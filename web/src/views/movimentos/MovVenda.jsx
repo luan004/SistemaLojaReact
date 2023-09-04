@@ -326,7 +326,7 @@ function MovVenda() {
               </div>
               <div className="input">
                 <label htmlFor="vrunitario">Valor Unitário</label>
-                <input type="number" name="vrunitario" id="vrunitario" value={precoUnit || ""} disabled/>
+                <input type="number" name="vrunitario" id="vrunitario" value={`R$ ${precoUnit || ""}`} disabled/>
               </div>
               <div className="input">
                 <label htmlFor="subtotal">Sub. Total</label>
@@ -357,8 +357,8 @@ function MovVenda() {
                   <td>{produto.id}</td>
                   <td>{produto.nome}</td>
                   <td>{produto.unidades}</td>
-                  <td>{produto.vrunitario}</td>
-                  <td>{produto.subtotal}</td>
+                  <td>R${produto.vrunitario.replace('.',',')}</td>
+                  <td>R${produto.subtotal}</td>
                   <td>
                     <button className="btn-action remove" type="button" onClick={openModal}>
                       <FontAwesomeIcon icon={faTrash} />
