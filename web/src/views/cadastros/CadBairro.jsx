@@ -11,6 +11,8 @@ function CadBairro() {
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [cod, setCod] = useState(0);
+  const [nome, setNome] = useState("");
 
   function showListar() {
     setListar(true);
@@ -31,13 +33,13 @@ function CadBairro() {
     setEditingItem(item);
     showIncluir();
     
-    document.getElementById('cod').value = item.id;
-    document.getElementById('nome').value = item.nome;
+    setCod(item.id);
+    setNome(item.nome);
   };
 
   function cancel() {
-    const form = document.getElementById('form');
-    form.reset();
+    setCod();
+    setNome("");
     setEditMode(false);
   }
 
@@ -67,8 +69,8 @@ function CadBairro() {
   function submit() { // CRIAR ITEM OU EDITAR ITEM
     if (editMode) {
       const edited = {
-        id: document.getElementById('cod').value,
-        nome: document.getElementById('nome').value
+        id: cod,
+        nome: nome
       };
   
       fetch(`http://localhost:3001/api/bairros/${editingItem.id}`, {
@@ -80,7 +82,7 @@ function CadBairro() {
       })
     } else {
       const newItem = {
-        nome: document.getElementById('nome').value
+        nome: nome
       };
   
       fetch("http://localhost:3001/api/bairros", {
@@ -92,6 +94,7 @@ function CadBairro() {
       })
     }
     cancel();
+    listar ? loadLista() : showListar();
   }
   
   function confirmModal(item) { // EXCLUIR ITEM
@@ -157,11 +160,11 @@ function CadBairro() {
             <div className="input-row">
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="cod">Código</label>
-                <input type="number" id="cod" name="cod" disabled/>
+                <input type="number" id="cod" name="cod" value={cod || ''} disabled={true} onchange={e => setCod(e.target.value)} />
               </div>
               <div className="input">
                 <label htmlFor="nome">Nome do Bairro</label>
-                <input type="text" id="nome" name="nome" />
+                <input type="text" id="nome" name="nome" value={nome || ''} onChange={e => setNome(e.target.value)} required={true} />
               </div>
             </div>
             <div className="input-row bottom">
