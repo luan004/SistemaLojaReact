@@ -15,6 +15,17 @@ function CadPessoa() {
   const [cidades, setCidades] = useState([]);
   const [bairros, setBairros] = useState([]);
 
+  const [cod, setCod] = useState(0);
+  const [nome, setNome] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cep, setCep] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+
   function showListar() {
     setListar(true);
     setIncluir(false);
@@ -33,22 +44,30 @@ function CadPessoa() {
     setEditMode(true);
     setEditingItem(item);
     showIncluir();
-    
-    document.getElementById('cod').value = item.id;
-    document.getElementById('nome').value = item.nome;
-    document.getElementById('cidade').value = item.cidade_fk;
-    document.getElementById('bairro').value = item.bairro_fk;
-    document.getElementById('cep').value = item.cep;
-    document.getElementById('endereco').value = item.endereco;
-    document.getElementById('numero').value = item.numero;
-    document.getElementById('complemento').value = item.complemento;
-    document.getElementById('telefone').value = item.telefone;
-    document.getElementById('email').value = item.email;
+
+    setCod(item.id);
+    setNome(item.nome);
+    setCidade(item.cidade_fk);
+    setBairro(item.bairro_fk);
+    setCep(item.cep);
+    setEndereco(item.endereco);
+    setNumero(item.numero);
+    setComplemento(item.complemento);
+    setTelefone(item.telefone);
+    setEmail(item.email);
   };
 
   function cancel() {
-    const form = document.getElementById('form');
-    form.reset();
+    setCod();
+    setNome("");
+    setCidade("");
+    setBairro("");
+    setCep("");
+    setEndereco("");
+    setNumero("");
+    setComplemento("");
+    setTelefone("");
+    setEmail("");
     setEditMode(false);
   }
 
@@ -123,16 +142,16 @@ function CadPessoa() {
   function submit() { // CRIAR ITEM OU EDITAR ITEM
     if (editMode) {
       const edited = {
-        id: document.getElementById('cod').value,
-        nome: document.getElementById('nome').value,
-        cidade_fk: document.getElementById('cidade').value,
-        bairro_fk: document.getElementById('bairro').value,
-        cep: document.getElementById('cep').value,
-        endereco: document.getElementById('endereco').value,
-        numero: document.getElementById('numero').value,
-        complemento: document.getElementById('complemento').value,
-        telefone: document.getElementById('telefone').value,
-        email: document.getElementById('email').value
+        id: cod,
+        nome: nome,
+        cidade_fk: cidade,
+        bairro_fk: bairro,
+        cep: cep,
+        endereco: endereco,
+        numero: numero,
+        complemento: complemento,
+        telefone: telefone,
+        email: email
       };
   
       fetch(`http://localhost:3001/api/pessoas/${editingItem.id}`, {
@@ -144,16 +163,18 @@ function CadPessoa() {
       })
     } else {
       const newItem = {
-        nome: document.getElementById('nome').value,
-        cidade_fk: document.getElementById('cidade').value,
-        bairro_fk: document.getElementById('bairro').value,
-        cep: document.getElementById('cep').value,
-        endereco: document.getElementById('endereco').value,
-        numero: document.getElementById('numero').value,
-        complemento: document.getElementById('complemento').value,
-        telefone: document.getElementById('telefone').value,
-        email: document.getElementById('email').value
+        nome: nome,
+        cidade_fk: cidade,
+        bairro_fk: bairro,
+        cep: cep,
+        endereco: endereco,
+        numero: numero,
+        complemento: complemento,
+        telefone: telefone,
+        email: email
       };
+
+      console.log(newItem);
   
       fetch("http://localhost:3001/api/pessoas", {
         method: "POST",
@@ -233,17 +254,18 @@ function CadPessoa() {
           <div className="input-row">
               <div className="input" style={{width:"100px"}}>
                 <label htmlFor="cod">Código</label>
-                <input type="number" id="cod" name="cod" disabled />
+                <input type="number" id="cod" name="cod" value={cod || ''} onChange={e => setCod(e.target.value)} disabled />
               </div>
               <div className="input">
                 <label htmlFor="nome">Nome da Pessoa</label>
-                <input type="text" id="nome" name="nome" />
+                <input type="text" id="nome" name="nome" value={nome || ''} onChange={e => setNome(e.target.value)} />
               </div>
             </div>
             <div className="input-row">
               <div className="input">
                 <label htmlFor="cidade">Cidade</label>
-                <select name="cidade" id="cidade">
+                <select name="cidade" id="cidade" value={cidade || ''} onChange={e => setCidade(e.target.value)}>
+                  <option value="">Selecione uma cidade</option>
                   {cidades && cidades.map((cidade) => (
                     <option key={cidade.id} value={cidade.id}>{cidade.nome}</option>
                   ))}
@@ -251,7 +273,8 @@ function CadPessoa() {
               </div>
               <div className="input">
                 <label htmlFor="bairro">Bairro</label>
-                <select name="bairro" id="bairro">
+                <select name="bairro" id="bairro" value={bairro || ''} onChange={e => setBairro(e.target.value)}>
+                  <option value="">Selecione um bairro</option>
                   {bairros && bairros.map((bairro) => (
                     <option key={bairro.id} value={bairro.id}>{bairro.nome}</option>
                   ))}
@@ -259,31 +282,31 @@ function CadPessoa() {
               </div>
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="cep">CEP</label>
-                <input type="text" id="cep" name="cep" maxLength={9} minLength={9} />
+                <input type="text" id="cep" name="cep" maxLength={9} minLength={9} value={cep || ''} onChange={e => setCep(e.target.value)} />
               </div>
             </div>
             <div className="input-row"> 
               <div className="input">
                 <label htmlFor="endereco">Endereço</label>
-                <input type="text" id="endereco" name="endereco" />
+                <input type="text" id="endereco" name="endereco" value={endereco || ''} onChange={e => setEndereco(e.target.value)} />
               </div>
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="numero">Número</label>
-                <input type="number" id="numero" name="numero" />
+                <input type="number" id="numero" name="numero" value={numero || ''} onChange={e => setNumero(e.target.value)} />
               </div>
               <div className="input">
                 <label htmlFor="complemento">Complemento</label>
-                <input type="text" id="complemento" name="complemento" />
+                <input type="text" id="complemento" name="complemento" value={complemento || ''} onChange={e => setComplemento(e.target.value)} />
               </div>
             </div>
             <div className="input-row">
               <div className="input">
                 <label htmlFor="telefone">Telefone</label>
-                <input type="tel" id="telefone" name="telefone" maxLength={11} />
+                <input type="tel" id="telefone" name="telefone" maxLength={11} value={telefone || ''} onChange={e => setTelefone(e.target.value)} />
               </div>
               <div className="input">
                 <label htmlFor="email">E-Mail</label>
-                <input type="email" id="email" name="email" />
+                <input type="email" id="email" name="email" value={email || ''} onChange={e => setEmail(e.target.value)} />
               </div>
             </div>
             <div className="input-row bottom">
