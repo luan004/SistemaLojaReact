@@ -12,6 +12,10 @@ function CadCidade() {
   const [editMode, setEditMode] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
+  const [cod, setCod] = useState(0);
+  const [nome, setNome] = useState("");
+  const [uf, setUf] = useState("");
+
   function showListar() {
     setListar(true);
     setIncluir(false);
@@ -31,14 +35,15 @@ function CadCidade() {
     setEditingItem(item);
     showIncluir();
     
-    document.getElementById('cod').value = item.id;
-    document.getElementById('nome').value = item.nome;
-    document.getElementById('uf').value = item.uf;
+    setCod(item.id);
+    setNome(item.nome);
+    setUf(item.uf);
   };
 
   function cancel() {
-    const form = document.getElementById('form');
-    form.reset();
+    setCod();
+    setNome("");
+    setUf("");
     setEditMode(false);
   }
 
@@ -68,9 +73,9 @@ function CadCidade() {
   function submit() { // CRIAR ITEM OU EDITAR ITEM
     if (editMode) {
       const edited = {
-        id: document.getElementById('cod').value,
-        nome: document.getElementById('nome').value,
-        uf: document.getElementById('uf').value,
+        id: cod,
+        nome: nome,
+        uf: uf
       };
   
       fetch(`http://localhost:3001/api/cidades/${editingItem.id}`, {
@@ -82,8 +87,8 @@ function CadCidade() {
       })
     } else {
       const newItem = {
-        nome: document.getElementById('nome').value,
-        uf: document.getElementById('uf').value,
+        nome: nome,
+        uf: uf
       };
   
       fetch("http://localhost:3001/api/cidades", {
@@ -95,6 +100,7 @@ function CadCidade() {
       })
     }
     cancel();
+    listar ? loadLista() : showListar();
   }
   
   function confirmModal(item) { // EXCLUIR ITEM
@@ -162,15 +168,15 @@ function CadCidade() {
             <div className="input-row">
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="cod">Código</label>
-                <input type="number" id="cod" name="cod" disabled/>
+                <input type="number" id="cod" name="cod" value={cod || ''} onChange={e => setCod(e.target.value)} disabled/>
               </div>
               <div className="input">
                 <label htmlFor="nome">Nome da Cidade</label>
-                <input type="text" id="nome" name="nome" />
+                <input type="text" id="nome" name="nome" value={nome || ''} onChange={e => setNome(e.target.value)} />
               </div>
               <div className="input" style={{width:"200px"}}>
                 <label htmlFor="uf">UF</label>
-                <input type="text" id="uf" name="uf" maxLength={2} style={{textTransform:"uppercase"}}/>
+                <input type="text" id="uf" name="uf" maxLength={2} style={{textTransform:"uppercase"}} value={uf || ''} onChange={e => setUf(e.target.value)} />
               </div>
             </div>
             <div className="input-row bottom">
